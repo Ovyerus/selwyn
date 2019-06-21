@@ -1,9 +1,6 @@
 module.exports = {
-    extends: 'clarity/typescript',
+    extends: 'clarity/react-typescript',
     parserOptions: {
         project: './tsconfig.json'
-    },
-    env: {
-        node: true
     }
 }

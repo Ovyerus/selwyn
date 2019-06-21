@@ -8,12 +8,12 @@ type NowLambda = (req: NowRequest, res: NowResponse) => any;
  */
 export default function withValidate(schema: Joi.Schema, handler: NowLambda) {
     return async function(req: NowRequest, res: NowResponse) {
-        let result: Joi.ValidationResult<any> | null = null;
+        if (!req.body) return res.status(400).json({error: 'Route needs body.'});
 
-        if (req.body) result = Joi.validate(req.body, schema);
+        let result: Joi.ValidationResult<any> = Joi.validate(req.body, schema);
 
-        if (result && result.error) return res.status(400).send(result.error.details);
-        else if (result) req.body = result.value;
+        if (result.error) return res.status(400).json(result.error.details);
+        else req.body = result.value;
 
         return handler(req, res);
     }

@@ -1,5 +1,6 @@
 import ky from 'ky-universal';
 import React from 'react';
+import MaskedInput from 'react-text-mask';
 
 interface APIResponse {
     url: string;
@@ -12,8 +13,11 @@ function useForm(initial: string) {
     return [value, setFromForm] as const;
 }
 
+const codeMask = Array(32).fill(/[a-z0-9-_)]/);
+
 const Index: React.FunctionComponent = () => {
     const [url, setUrl] = useForm('');
+    const [code, setCode] = useForm('');
     const [result, setResult] = React.useState<string | null>(null);
     const [responseError, setError] = React.useState<Error | null>(null);
 
@@ -35,7 +39,7 @@ const Index: React.FunctionComponent = () => {
         let result: APIResponse;
 
         try {
-            result = await ky.post('shorten', {prefixUrl: location.origin, json: {url}}).json<APIResponse>();
+            result = await ky.post('shorten', {prefixUrl: location.origin, json: {url, code}}).json<APIResponse>();
         } catch (err) {
             console.error(err);
             setError(err);
@@ -73,9 +77,14 @@ const Index: React.FunctionComponent = () => {
             <h2>Enter url to shorten</h2>
             <form onSubmit={e => e.preventDefault()}>
                 <div className="input-wrapper">
-                    <input name="shortenUrl" value={url} onChange={setUrl}/>
+                    <input name="shortenUrl" autoComplete="false" value={url} onChange={setUrl}/>
                     {badUrl && <div>Invalid url. Make sure it's a full url</div>}
                 </div>
+
+                <div className="input-wrapper">
+                    <MaskedInput name="customCode" guide={false} mask={codeMask} value={code} onChange={setCode}/>
+                </div>
+
                 <button onClick={submit} disabled={badUrl || !url}>Submit</button>
             </form>
 

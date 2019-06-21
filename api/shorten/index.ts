@@ -8,8 +8,8 @@ import hash from '../../lib/hashUrl';
 import withValidate from '../../lib/withValidate';
 
 const handler = async (req: NowRequest, res: NowResponse) => {
-    const {url} = req.body as {url: string};
-    const id = hash(url);
+    const {url, code} = req.body as {url: string; code?: string};
+    const id = code || hash(url);
 
     const exists = await getRedirectById(id);
 
@@ -30,7 +30,8 @@ const resultFormat = (req: NowRequest, id: string) => ({
 const schema = Joi.object().keys({
     url: Joi.string().uri({
         scheme: ['http', 'https']
-    })
+    }),
+    code: Joi.string().regex(/^[a-z0-9-_]{0,32}$/).optional()
 });
 
 export default withValidate(schema, handler);
