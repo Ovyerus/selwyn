@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "now dev",
-    "lint": "eslint ."
+    "lint": "eslint . --ext js,jsx,ts,tsx"
   },
   "dependencies": {
     "@emotion/hash": "^0.7.1",
