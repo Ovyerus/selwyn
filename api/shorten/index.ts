@@ -5,6 +5,7 @@ import u from 'url';
 
 import {addRedirect, getRedirectById} from '../../lib/db';
 import hash from '../../lib/hashUrl';
+import withAuth from '../../lib/withAuth';
 import withValidate from '../../lib/withValidate';
 
 const handler = async (req: NowRequest, res: NowResponse) => {
@@ -31,7 +32,10 @@ const schema = Joi.object().keys({
     url: Joi.string().uri({
         scheme: ['http', 'https']
     }),
-    code: Joi.string().regex(/^[a-z0-9-_]{0,32}$/).optional()
+    code: Joi
+        .string()
+        .regex(/^[a-z0-9-_]{0,32}$/)
+        .optional()
 });
 
-export default withValidate(schema, handler);
+export default withAuth(withValidate(schema, handler));

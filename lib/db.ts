@@ -10,8 +10,6 @@ const db = mysql({
     }
 });
 
-interface OkPacket {}
-
 export interface RedirectRow {
     id: string;
     url: string;
@@ -28,4 +26,4 @@ export default async function query<T = any>(strings: TemplateStringsArray, ...v
 export const getRedirectById = async (id: string): Promise<RedirectRow | undefined> => (
     await query<RedirectRow[]>`SELECT * FROM redirects WHERE id = ${id} LIMIT 1`
 )[0];
-export const addRedirect = (id: string, url: string) => query<OkPacket>`INSERT INTO redirects (id, url) VALUES (${id}, ${url})`;
+export const addRedirect = (id: string, url: string) => query<{}>`INSERT INTO redirects (id, url) VALUES (${id}, ${url})`;

@@ -1,114 +1,56 @@
 import ky from 'ky-universal';
+import {NextFC} from 'next';
+import {useRouter} from 'next/router';
 import React from 'react';
-import MaskedInput from 'react-text-mask';
 
-interface APIResponse {
-    url: string;
-}
+import {useForm} from '../lib/hooks';
 
-function useForm(initial: string) {
-    const [value, setValue] = React.useState(initial);
-    const setFromForm = (ev: React.ChangeEvent<HTMLInputElement>) => setValue(ev.target.value);
+const Index: NextFC = () => {
+    const [ visible, setVisible ] = React.useState(false);
+    const [ key, setKey ] = useForm('');
+    const [ responseError, setError ] = React.useState<Error | null>(null);
+    const router = useRouter();
 
-    return [value, setFromForm] as const;
-}
-
-const codeMask = Array(32).fill(/[a-z0-9-_)]/);
-
-const Index: React.FunctionComponent = () => {
-    const [url, setUrl] = useForm('');
-    const [code, setCode] = useForm('');
-    const [result, setResult] = React.useState<string | null>(null);
-    const [responseError, setError] = React.useState<Error | null>(null);
-
-    const badUrl = React.useMemo(() => {
-        if (!url) return false;
-
-        try {
-            return !(new URL(url));
-        } catch {
-            return true;
-        }
-    }, [url]);
     const submit = React.useCallback(async () => {
-        if (badUrl) return;
-
-        setResult(null);
-        setError(null);
-
-        let result: APIResponse;
+        if (!key) return;
 
         try {
-            result = await ky.post('shorten', {prefixUrl: location.origin, json: {url, code}}).json<APIResponse>();
+            await ky.post('auth', {
+                prefixUrl: location.origin,
+                json: { key }
+            });
+            router.push('/add');
         } catch (err) {
             console.error(err);
             setError(err);
-            return;
         }
+    }, [key]);
 
-        setResult(result.url);
-    }, [badUrl, url]);
-    const copyToClipboard = React.useCallback(async () => {
-        if (!result) return;
+    React.useEffect(() => setError(null), [key]);
 
-        if (!navigator.clipboard) {
-            const textArea = document.createElement('textarea');
-            textArea.value = result;
+    return visible
+        ? <span onClick={() => set(true)}>👀</span>
+        : (
+            <div>
+                <form onSubmit={e => e.preventDefault()}>
+                    <input name="authKey" autoComplete="false" value={url} onChange={setUrl}/>
+                    <button onClick={submit} disabled={!key}>Submit</button>
+                </form>
 
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
+                {responseError && (
+                    <div>
+                        Error trying to authenticate
+                        <pre><code>{responseError.toString()}</code></pre>
+                    </div>
+                )}
+                <style jsx>
+                </style>
+            </div>
+        );
+};
 
-            try {
-                document.execCommand('copy');
-                console.log('tried using fallback');
-            } catch {}
-            return;
-        }
+Index.getInitialProps = ({res}) => {
 
-        await navigator.clipboard.writeText(result);
-        console.log('Copied result to clipboard');
-    }, [result]);
-
-    React.useEffect(() => setError(null), [url]);
-
-    return (
-        <div className="container">
-            <h2>Enter url to shorten</h2>
-            <form onSubmit={e => e.preventDefault()}>
-                <div className="input-wrapper">
-                    <input name="shortenUrl" autoComplete="false" value={url} onChange={setUrl}/>
-                    {badUrl && <div>Invalid url. Make sure it's a full url</div>}
-                </div>
-
-                <div className="input-wrapper">
-                    <MaskedInput name="customCode" guide={false} mask={codeMask} value={code} onChange={setCode}/>
-                </div>
-
-                <button onClick={submit} disabled={badUrl || !url}>Submit</button>
-            </form>
-
-            {responseError && (
-                <div>
-                    Error trying to submit url <code>{url}</code>
-                    <pre><code>{responseError.toString()}</code></pre>
-                </div>
-            )}
-
-            {result && (
-                <div>
-                    Shortened url: <code title="Copy to clipboard" onClick={copyToClipboard}>{result}</code>
-                </div>
-            )}
-            <style jsx>{`
-                .container {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: flex-start;
-                }
-            `}</style>
-        </div>
-    );
 }
 
 export default Index;

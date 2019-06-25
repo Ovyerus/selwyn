@@ -4,3 +4,9 @@ CREATE TABLE IF NOT EXISTS redirects(
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS redirect_keys(
+    id INT AUTO_INCREMENT,
+    content TEXT NOT NULL,
+    PRIMARY KEY (id)
+);

@@ -13,6 +13,7 @@
     ],
     "routes": [
         { "src": "/shorten", "dest": "/api/shorten", "methods": ["POST"] },
+        { "src": "/auth", "dest": "/api/auth", "methods": ["POST"]},
         { "src": "/(?<id>[^/]+)", "dest": "/api/redirect?id=$id", "methods": ["GET"] }
     ]
 }
