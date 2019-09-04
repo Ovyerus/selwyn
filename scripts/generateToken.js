@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const bip39 = require('bip39');
 const clipboardy = require('clipboardy');
 const c = require('colorette');
@@ -9,13 +9,13 @@ const sql = require('sql-template-strings');
 
 const { randomBytes } = require('crypto');
 
+// Load root .env config like `now dev` would.
 require('dotenv').config();
 
 const asyncBytes = s =>
   new Promise((resolve, reject) =>
     randomBytes(s, (err, buf) => (err ? reject(err) : resolve(buf)))
   );
-const timeout = i => new Promise(r => setTimeout(r, i));
 
 const hasEnvVars = !!(
   process.env.MYSQL_HOST &&
@@ -84,7 +84,7 @@ async function main() {
 
   const genSpinner = ora({
     text: 'Generating passphrase',
-    spinner: 'triangle'
+    spinner: 'dots11'
   }).start();
 
   const bytes = (await asyncBytes(16)).toString('hex');
@@ -95,7 +95,7 @@ async function main() {
 
   const storeSpinner = ora({
     text: 'Storing passphase',
-    spinner: 'triangle'
+    spinner: 'dots11'
   }).start();
 
   if (alreadyGenerated) await query`UPDATE redirect_keys SET content = ${hash}`;

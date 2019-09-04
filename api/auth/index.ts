@@ -1,7 +1,6 @@
 import Joi from '@hapi/joi';
 import { NowRequest, NowResponse } from '@now/node';
-
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import cookie from 'cookie';
 
 import query from '../../lib/db';
@@ -13,7 +12,7 @@ const handler = async (req: NowRequest, res: NowResponse) => {
   // TODO: do we need to throw error if doesn't exist.
   const [{ dbKey }] = await query<
     [{ dbKey: string }]
-  >`SELECT key AS dbKey FROM redirect_tokens`;
+  >`SELECT content AS dbKey FROM redirect_keys`;
 
   if (!(await bcrypt.compare(key, dbKey)))
     return res.status(400).json({

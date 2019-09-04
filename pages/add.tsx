@@ -4,17 +4,18 @@ import React from 'react';
 import MaskedInput from 'react-text-mask';
 
 import { useForm } from '../lib/hooks';
+import { withPageNeedsAuth } from '../lib/withAuth';
 
 interface APIResponse {
   url: string;
 }
 
-const Add: React.FunctionComponent = () => {
+const Add: React.FC = () => {
   const [url, setUrl] = useForm('');
   const [code, setCode] = useForm('');
   const [result, setResult] = React.useState<string | null>(null);
   const [responseError, setError] = React.useState<Error | null>(null);
-  const mask = React.useMemo(() => repeat(/[a-z0-9-_)]/), []);
+  const mask = React.useMemo(() => repeat(/[a-z0-9-_)]/, 32), []);
 
   const badUrl = React.useMemo(() => {
     if (!url) return false;
@@ -41,6 +42,9 @@ const Add: React.FunctionComponent = () => {
         })
         .json<APIResponse>();
     } catch (err) {
+      const b = await err.response.json();
+
+      console.log(b);
       console.error(err);
       setError(err);
       return;
@@ -98,7 +102,7 @@ const Add: React.FunctionComponent = () => {
           />
         </div>
 
-        <button onClick={submit} disabled={badUrl || !url}>
+        <button disabled={badUrl || !url} onClick={submit}>
           Submit
         </button>
       </form>
@@ -131,4 +135,4 @@ const Add: React.FunctionComponent = () => {
   );
 };
 
-export default Add;
+export default withPageNeedsAuth(Add);

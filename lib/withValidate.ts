@@ -10,12 +10,16 @@ export default function withValidate(
   schema: Joi.Schema,
   handler: NowLambda
 ): NowLambda {
-  return async function(req: NowRequest, res: NowResponse) {
-    if (!req.body) return res.status(400).json({ error: 'Route needs body.' });
+  return function(req: NowRequest, res: NowResponse) {
+    if (!req.body)
+      return Promise.resolve(
+        res.status(400).json({ error: 'Route needs body.' })
+      );
 
-    let result: Joi.ValidationResult<any> = Joi.validate(req.body, schema);
+    const result: Joi.ValidationResult<any> = Joi.validate(req.body, schema);
 
-    if (result.error) return res.status(400).json(result.error.details);
+    if (result.error)
+      return Promise.resolve(res.status(400).json(result.error.details));
     else req.body = result.value;
 
     return handler(req, res);

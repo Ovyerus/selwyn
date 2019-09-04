@@ -1,11 +1,11 @@
 import ky from 'ky-universal';
-import { NextFC } from 'next';
 import { useRouter } from 'next/router';
 import React from 'react';
 
 import { useForm } from '../lib/hooks';
+import { withPageNeedsAuth } from '../lib/withAuth';
 
-const Index: NextFC = () => {
+const Index: React.FC = () => {
   const [visible, setVisible] = React.useState(false);
   const [key, setKey] = useForm('');
   const [responseError, setError] = React.useState<Error | null>(null);
@@ -13,6 +13,8 @@ const Index: NextFC = () => {
 
   const submit = React.useCallback(async () => {
     if (!key) return;
+
+    setError(null);
 
     try {
       await ky.post('auth', {
@@ -24,14 +26,14 @@ const Index: NextFC = () => {
       console.error(err);
       setError(err);
     }
-  }, [key]);
+  }, [key, router]);
 
   React.useEffect(() => setError(null), [key]);
 
-  return visible ? (
+  return !visible ? (
     <span onClick={() => setVisible(true)}>👀</span>
   ) : (
-    <div>
+    <div className="container">
       <form onSubmit={e => e.preventDefault()}>
         <input
           name="authKey"
@@ -39,7 +41,7 @@ const Index: NextFC = () => {
           value={key}
           onChange={setKey}
         />
-        <button onClick={submit} disabled={!key}>
+        <button disabled={!key} onClick={submit}>
           Submit
         </button>
       </form>
@@ -52,11 +54,12 @@ const Index: NextFC = () => {
           </pre>
         </div>
       )}
-      <style jsx />
+      <style jsx>{`
+        .container {
+        }
+      `}</style>
     </div>
   );
 };
 
-Index.getInitialProps = ({ res }) => {};
-
-export default Index;
+export default withPageNeedsAuth(Index, true);
