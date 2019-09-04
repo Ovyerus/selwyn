@@ -1,3 +1,1 @@
-const withTypescript = require('@zeit/next-typescript');
-
-module.exports = withTypescript({ target: 'serverless' });
+module.exports = { target: 'serverless' };
