@@ -1,19 +1,18 @@
 import { NowRequest, NowResponse } from '@now/node';
 import bcrypt from 'bcryptjs';
 import cookie from 'cookie';
-import { NextFC } from 'next';
+import { NextPage } from 'next';
 import Router from 'next/router';
 import React from 'react';
 
-import query from './db';
+import { DbKey, firestore } from './db';
 
 type NowLambda = (req: NowRequest, res: NowResponse) => Promise<any>;
+const dbKeys = firestore.collection<DbKey>({ path: 'dbkeys' });
 
 export default function withAuth(handler: NowLambda): NowLambda {
   return async function(req: NowRequest, res: NowResponse) {
-    const [{ dbKey: key }] = await query<
-      [{ dbKey: string }]
-    >`SELECT content AS dbKey FROM redirect_keys`;
+    const [{ content: key }] = await dbKeys.fetchAll();
     const userKey = req.cookies.token || (req.headers.authentication as string);
 
     if (!userKey) return res.status(401).send(null);
@@ -28,9 +27,9 @@ export default function withAuth(handler: NowLambda): NowLambda {
 
 export const withPageNeedsAuth = <P extends object>(
   Component: React.ComponentType<P>,
-  invert: boolean = false
+  invert = false
 ) => {
-  const PageWithAuth: NextFC<P> = props => <Component {...props} />;
+  const PageWithAuth: NextPage<P> = props => <Component {...props} />;
 
   // eslint-disable-next-line
   PageWithAuth.getInitialProps = async ({ req, res }) => {

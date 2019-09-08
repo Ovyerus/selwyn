@@ -1,37 +1,42 @@
-import mysql from 'serverless-mysql';
-import sql from 'sql-template-strings';
+import admin, { ServiceAccount } from 'firebase-admin';
+import { FirestoreSimple } from 'firestore-simple';
 
-const db = mysql({
-  config: {
-    host: process.env.MYSQL_HOST,
-    database: process.env.MYSQL_DATABASE,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD
-  }
-});
-
-export interface RedirectRow {
+export interface Redirect {
   id: string;
   url: string;
-  created_at: Date;
+  created: Date;
 }
 
-export default async function query<T = any>(
-  strings: TemplateStringsArray,
-  ...values: any[]
-) {
-  const res = await db.query<T>(sql(strings, ...values));
-
-  await db.end();
-  return res;
+export interface DbKey {
+  id: string;
+  content: string;
 }
 
-export const getRedirectById = async (
-  id: string
-): Promise<RedirectRow | undefined> =>
-  (await query<
-    RedirectRow[]
-  >`SELECT * FROM redirects WHERE id = ${id} LIMIT 1`)[0];
+function getConfig(): ServiceAccount {
+  // Env var injected by the Now + GCloud integration
+  return process.env.GCLOUD_CREDENTIALS
+    ? JSON.parse(
+        // XXX: JSON.parse in Node actually allows a Buffer input but types say no.
+        // Should make PR to types to add that.
+        Buffer.from(process.env.GCLOUD_CREDENTIALS, 'base64').toString('utf-8')
+      )
+    : require('../firebase.json'); // eslint-disable-line
+}
+const config = getConfig();
 
+admin.initializeApp({ credential: admin.credential.cert(config) });
+
+const baseFirestore = admin.firestore();
+export const firestore = new FirestoreSimple(baseFirestore);
+const redirects = firestore.collection<Redirect>({
+  path: 'redirects',
+  decode: ({ id, url, created }) => ({ id, url, created: created.toDate() })
+});
+
+export const getRedirectById = (id: string) => redirects.fetch(id);
 export const addRedirect = (id: string, url: string) =>
-  query<{}>`INSERT INTO redirects (id, url) VALUES (${id}, ${url})`;
+  redirects.add({
+    id,
+    url,
+    created: admin.firestore.FieldValue.serverTimestamp()
+  });
