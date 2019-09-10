@@ -1,19 +1,17 @@
 {
-    "version": 2,
-    "name": "micro-link",
-    "env": {
-        "MYSQL_HOST": "@mysql_host",
-        "MYSQL_USER": "@mysql_user",
-        "MYSQL_PASSWORD": "@mysql_password",
-        "MYSQL_DATABASE": "@mysql_database"
-    },
-    "builds": [
-        { "src": "api/**/*.ts", "use": "@now/node" },
-        { "src": "next.config.js", "use": "@now/next" }
-    ],
-    "routes": [
-        { "src": "/shorten", "dest": "/api/shorten", "methods": ["POST"] },
-        { "src": "/auth", "dest": "/api/auth", "methods": ["POST"]},
-        { "src": "/(?<id>[^/]+)", "dest": "/api/redirect?id=$id", "methods": ["GET"] }
-    ]
+  "version": 2,
+  "name": "micro-link",
+  "builds": [
+    { "src": "api/**/*.ts", "use": "@now/node" },
+    { "src": "next.config.js", "use": "@now/next" }
+  ],
+  "routes": [
+    { "src": "/shorten", "dest": "/api/shorten", "methods": ["POST"] },
+    { "src": "/auth", "dest": "/api/auth", "methods": ["POST"] },
+    {
+      "src": "/(?<id>[^/]+)",
+      "dest": "/api/redirect?id=$id",
+      "methods": ["GET"]
+    }
+  ]
 }

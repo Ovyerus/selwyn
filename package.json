@@ -5,10 +5,13 @@
   "main": "index.js",
   "author": "Ovyerus <iamovyerus@gmail.com>",
   "license": "MIT",
+  "engines": {
+    "node": ">=10.0.0"
+  },
   "scripts": {
     "dev": "now dev",
     "lint": "eslint . --ext js,jsx,ts,tsx",
-    "generate": "ts-node scripts/generateToken.ts"
+    "generate": "ts-node --project ./nottsconfig.local.json scripts/generateToken.ts"
   },
   "dependencies": {
     "@emotion/hash": "^0.7.2",

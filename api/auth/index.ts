@@ -15,19 +15,19 @@ const dbKeys = firestore.collection<DbKey>({ path: 'dbkeys' });
 const handler = async (req: NowRequest, res: NowResponse) => {
   const { key: mnemonic } = req.body as { key: string };
   const keys = await dbKeys.fetchAll();
-  const hash = await bcrypt.hash(mnemonic, 12);
 
   if (
     // Check if any of the keys match the user's given one.
     // Ideally there'd only be one key in the DB, but you never know.
     // XXX: Maybe store dbkey in Firebase functions config
     !(await Promise.all(
-      keys.map(row => bcrypt.compare(hash, row.content))
+      keys.map(row => bcrypt.compare(mnemonic, row.content))
     )).some(x => x)
   )
     return res.status(400).json({ error: 'Invalid auth key' });
 
-  const encodedKey = Buffer.from(hash).toString('base64');
+  // FIXME: should probably use JWT
+  const encodedKey = Buffer.from(mnemonic).toString('base64');
 
   res.setHeader(
     'Set-Cookie',

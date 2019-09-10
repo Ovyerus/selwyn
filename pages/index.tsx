@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 
 import { useForm } from '../lib/hooks';
-import { withPageNeedsAuth } from '../lib/withAuth';
+import { withPageNeedsAuth } from '../lib/pages';
 
 const Index: React.FC = () => {
   const [visible, setVisible] = React.useState(false);

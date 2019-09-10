@@ -7,7 +7,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "lib": ["dom", "es2017"],
-    "module": "commonjs",
+    "module": "esnext",
     "moduleResolution": "node",
     "noEmit": true,
     "noFallthroughCasesInSwitch": true,
@@ -19,6 +19,5 @@
     "target": "es2018",
     "allowSyntheticDefaultImports": true
   },
-  "exclude": ["node_modules"],
   "include": ["**/*.ts", "**/*.tsx"]
 }

@@ -4,7 +4,7 @@ import React from 'react';
 import MaskedInput from 'react-text-mask';
 
 import { useForm } from '../lib/hooks';
-import { withPageNeedsAuth } from '../lib/withAuth';
+import { withPageNeedsAuth } from '../lib/pages';
 
 interface APIResponse {
   url: string;
