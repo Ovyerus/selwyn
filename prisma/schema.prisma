@@ -1,0 +1,29 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id String @default(uuid()) @id
+  email String
+  isAdmin Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  redirects Redirect[]
+}
+
+model Redirect {
+  id Int @default(autoincrement()) @id
+  url String
+  hash String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  creatorId String
+  creator User @relation(fields: [creatorId], references: [id])
+}
+
+// TODO: hits/visitors
