@@ -27,6 +27,7 @@ export const request = <T = any>(
       ? {
           ...omit(["json"], init),
           headers: {
+            ...init.headers,
             Accept: "application/json",
             "Content-Type": "application/json",
           },
