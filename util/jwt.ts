@@ -4,8 +4,19 @@ import jwtVerify from "jose/jwt/verify";
 
 // import db from "./db";
 
-const secret = Buffer.from(process.env.JWT_SECRET!);
+interface Payload {
+  sub: string;
+  audience: string;
+  iat: number;
+}
 
+const secret = Buffer.from(process.env.JWT_SECRET!);
+const verifyOptions = {
+  algorithms: ["HS256"],
+  audience: "selwyn",
+};
+
+/** Create a new JWT for a user. */
 export const create = (user: User) => {
   const token = new SignJWT({})
     .setSubject(user.id)
@@ -16,13 +27,11 @@ export const create = (user: User) => {
   return token.sign(secret);
 };
 
+/** Verify a given JWT. */
 export const verify = async (token: string) => {
   try {
     // const { payload } =
-    await jwtVerify(token, secret, {
-      algorithms: ["HS256"],
-      audience: "selwyn",
-    });
+    await jwtVerify(token, secret, verifyOptions);
 
     return true;
     // const user = await db.user.findUnique({ where: { id: payload.sub } });
@@ -31,3 +40,9 @@ export const verify = async (token: string) => {
     return false;
   }
 };
+
+/** Get the payload from a JWT */
+export const getPayload = (token: string) =>
+  jwtVerify(token, secret, verifyOptions).then(
+    ({ payload }) => payload as any as Payload
+  );

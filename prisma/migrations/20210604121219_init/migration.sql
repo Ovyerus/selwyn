@@ -23,3 +23,6 @@ CREATE TABLE "Redirect" (
 
 -- AddForeignKey
 ALTER TABLE "Redirect" ADD FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Redirect.hash_unique" ON "Redirect"("hash");

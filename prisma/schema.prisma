@@ -19,7 +19,7 @@ model User {
 model Redirect {
   id Int @default(autoincrement()) @id
   url String
-  hash String
+  hash String @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   creatorId String
@@ -27,3 +27,4 @@ model Redirect {
 }
 
 // TODO: hits/visitors
+// TODO: marking for duplicate redirects?
