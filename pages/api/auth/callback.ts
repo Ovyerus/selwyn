@@ -43,7 +43,10 @@ export default methods({
     res
       .setHeader(
         "Set-Cookie",
-        cookie.serialize("token", token, { expires: new Date(2147483647000) })
+        cookie.serialize("token", token, {
+          expires: new Date(2147483647000),
+          path: "/",
+        })
       )
       .redirect("/dash");
   }),
