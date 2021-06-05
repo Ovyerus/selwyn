@@ -1,10 +1,11 @@
 {
-  "name": "micro-link",
+  "name": "selwyn",
   "version": "1.0.0",
-  "description": "A simple Now service for shortening links",
+  "description": "A dead simple Next.js redirection service.",
   "main": "index.js",
   "author": "Ovyerus <iamovyerus@gmail.com>",
   "license": "MIT",
+  "private": true,
   "scripts": {
     "build": "next build",
     "dev": "next",

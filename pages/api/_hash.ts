@@ -1,6 +1,7 @@
-import { /* authenticated, */ methods, validate } from "avoca";
+import { methods, validate } from "avoca";
 import { z } from "zod";
 
+import { noExtraWhitespace } from "~/util";
 import db from "~/util/db";
 import * as jwt from "~/util/jwt";
 
@@ -10,8 +11,8 @@ const getSchema = z.object({
 });
 
 const patchBodySchema = z.object({
-  hash: z.string().nonempty().optional(),
-  url: z.string().nonempty().optional(),
+  hash: noExtraWhitespace(z.string().nonempty()).optional(),
+  url: noExtraWhitespace(z.string().nonempty()).optional(),
 });
 const hashQuerySchema = z.object({
   hash: z.string().nonempty(),

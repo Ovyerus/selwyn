@@ -2,7 +2,7 @@ import { User } from "@prisma/client";
 import SignJWT from "jose/jwt/sign";
 import jwtVerify from "jose/jwt/verify";
 
-// import db from "./db";
+import db from "./db";
 
 interface Payload {
   sub: string;
@@ -30,12 +30,10 @@ export const create = (user: User) => {
 /** Verify a given JWT. */
 export const verify = async (token: string) => {
   try {
-    // const { payload } =
-    await jwtVerify(token, secret, verifyOptions);
+    const { payload } = await jwtVerify(token, secret, verifyOptions);
 
-    return true;
-    // const user = await db.user.findUnique({ where: { id: payload.sub } });
-    // return user;
+    const user = await db.user.findUnique({ where: { id: payload.sub } });
+    return !!user?.isAdmin;
   } catch (err) {
     return false;
   }

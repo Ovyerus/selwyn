@@ -1,5 +1,6 @@
 import { v3 as murmur } from "murmurhash";
 import { has, omit } from "rambda";
+import { z } from "zod";
 
 interface JsonRequestInit extends RequestInit {
   json?: any;
@@ -39,4 +40,11 @@ export const request = <T = any>(
   });
 };
 
-export const hash = (input: string) => murmur(input).toString(16);
+export const hashString = (input: string) => murmur(input).toString(16);
+
+export const noExtraWhitespace = (validator: z.ZodString) =>
+  validator
+    .refine((val) => val.trim() !== "", {
+      message: "String cannot be only whitespace",
+    })
+    .transform((val) => val.trim());
