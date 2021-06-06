@@ -10,6 +10,7 @@ const App = ({ Component, pageProps }: AppProps) => (
       <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
     </Head>
     <Component {...pageProps} />
+    <div id="overlays-root" />
   </>
 );
 

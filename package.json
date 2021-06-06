@@ -32,13 +32,15 @@
     "react-dom": "^17.0.2",
     "superjson": "^1.7.4",
     "ts-node": "^10.0.0",
-    "zod": "^3.1.0"
+    "zod": "^3.1.0",
+    "zustand": "^3.5.2"
   },
   "devDependencies": {
     "@types/cookie": "^0.4.0",
     "@types/murmurhash": "^2.0.0",
     "@types/node": "^15.12.0",
     "@types/react": "^17.0.9",
+    "@types/react-dom": "^17.0.6",
     "@typescript-eslint/eslint-plugin": "^4.26.0",
     "@typescript-eslint/parser": "^4.26.0",
     "autoprefixer": "^10.2.6",
