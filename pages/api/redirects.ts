@@ -14,6 +14,12 @@ const postSchema = z.object({
   hash: noExtraWhitespace(z.string().nonempty()).optional(), // Will have hash generated if not provided.
 });
 
+export const getRedirectsForUser = (creatorId: string) =>
+  db.redirect.findMany({
+    where: { creatorId },
+    take: 100,
+  });
+
 export default methods({
   get: {
     authenticate: (req) => jwt.verify(req.cookies.token),
@@ -21,10 +27,7 @@ export default methods({
     async fn(req, res) {
       const { sub: userId } = await jwt.getPayload(req.cookies.token);
       // TODO: pagination
-      const redirects = await db.redirect.findMany({
-        where: { creatorId: userId },
-        take: 100,
-      });
+      const redirects = getRedirectsForUser(userId);
 
       res.json({ status: 200, data: redirects });
     },
