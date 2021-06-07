@@ -35,7 +35,7 @@ const Toast = ({ children, className, duration, onClose }: ToastProps) => {
       }}
       layout
     >
-      <div className="w-full flex-grow">{children}</div>
+      <div className="w-full flex-grow flex items-center">{children}</div>
       <button className="rounded-button" onClick={() => onClose()}>
         <Icon icon={close} />
       </button>

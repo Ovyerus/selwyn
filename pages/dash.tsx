@@ -22,7 +22,7 @@ const DashPage = ({ redirects: initial }: Props) => {
   const pushToast = useStore(({ pushToast }) => pushToast);
   const dialogFocus = useRef(null);
 
-  const [redirects, { push }] = useList(initial);
+  const [redirects, { push, removeAt }] = useList(initial);
   const [dialogOpen, _setDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   const [newHash, setNewHash] = useState("");
@@ -70,9 +70,11 @@ const DashPage = ({ redirects: initial }: Props) => {
 
       // TODO: deserialise createdAt and updatedAt into Dates, if we need them later.
       push(data);
+      // Copy to clipboard?
       pushToast({
         duration: 3000,
         children: "Done!",
+        className: "!bg-green-100 dark:!bg-green-900",
       });
       setDialog(false);
     } catch (err) {
@@ -90,6 +92,40 @@ const DashPage = ({ redirects: initial }: Props) => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const deleteItem = async (hash: string) => {
+    try {
+      await request(`/api/redirects/${hash}`, { method: "DELETE" });
+      removeAt(redirects.findIndex((r) => r.hash === hash));
+
+      pushToast({
+        duration: 5000,
+        children: (
+          <>
+            Successfully deleted{" "}
+            <code className="bg-black bg-opacity-10 px-1 py-0.5 ml-1 rounded-lg">
+              {hash}
+            </code>
+            .
+          </>
+        ),
+        className: "!bg-green-100 dark:!bg-green-900",
+      });
+    } catch (err) {
+      console.error("failed to delete redirect", err);
+      pushToast({
+        duration: 5000,
+        children: (
+          <>
+            Failed to create redirect.
+            <br />
+            {err.message}
+          </>
+        ),
+        className: "!bg-red-100 dark:!bg-red-900",
+      });
     }
   };
 
@@ -152,7 +188,10 @@ const DashPage = ({ redirects: initial }: Props) => {
                   <button className="mr-3">
                     <Icon icon={pen} height={24} />
                   </button>
-                  <button className="text-red-500">
+                  <button
+                    className="text-red-500"
+                    onClick={() => deleteItem(row.hash)}
+                  >
                     <Icon icon={trash} height={24} />
                   </button>
                 </td>
@@ -171,7 +210,7 @@ const DashPage = ({ redirects: initial }: Props) => {
             static
             onClose={() => setDialog(false)}
           >
-            <div className="flex items-center justify-center min-h-screen">
+            <div className="flex items-center justify-center min-h-screen p-2">
               <Dialog.Overlay
                 as={motion.div}
                 initial={{ opacity: 0 }}
@@ -187,7 +226,7 @@ const DashPage = ({ redirects: initial }: Props) => {
               />
 
               <motion.aside
-                className="p-4 mx-auto max-w-md w-full bg-white dark:bg-gray-900 dark:text-white rounded-2xl z-20 shadow-2xl overflow-hidden"
+                className="p-4 mx-auto sm:max-w-md w-full bg-white dark:bg-gray-900 dark:text-white rounded-2xl z-20 shadow-2xl overflow-hidden"
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0 }}

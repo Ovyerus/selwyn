@@ -18,7 +18,7 @@
     @apply px-4 py-2;
     @apply bg-gray-200 text-black hover:bg-gray-300 focus-visible:bg-gray-300;
     @apply dark:bg-opacity-[15%] dark:hover:bg-opacity-30 dark:focus-visible:bg-opacity-30 dark:text-gray-50;
-    @apply text-sm font-medium;
+    @apply sm:text-sm font-medium;
     @apply rounded-lg focusable;
 
     &.success {
