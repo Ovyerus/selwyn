@@ -10,7 +10,7 @@ import * as jwt from "~/util/jwt";
 // });
 
 const postSchema = z.object({
-  url: noExtraWhitespace(z.string().nonempty()),
+  url: noExtraWhitespace(z.string().nonempty().url()),
   hash: noExtraWhitespace(z.string().nonempty()).optional(), // Will have hash generated if not provided.
 });
 
@@ -42,7 +42,7 @@ export default methods({
         where: { hash: hash_ },
       });
 
-      if (existingRedirect)
+      if (hash_ && existingRedirect)
         return res.status(409).json({
           status: 409,
           message: "Redirect with `hash` already exists.",
@@ -60,10 +60,7 @@ export default methods({
 
       res.json({
         status: 200,
-        data: {
-          hash: redirect.hash,
-          url: redirect.url,
-        },
+        data: redirect,
       });
     }),
   },

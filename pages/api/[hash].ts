@@ -7,12 +7,13 @@ import * as jwt from "~/util/jwt";
 
 const getSchema = z.object({
   hash: z.string().nonempty(),
+  // TODO: remove this option, force people to do `domain.com/_hash` instead if they want redir.
   redirect: z.boolean().default(true),
 });
 
 const patchBodySchema = z.object({
   hash: noExtraWhitespace(z.string().nonempty()).optional(),
-  url: noExtraWhitespace(z.string().nonempty()).optional(),
+  url: noExtraWhitespace(z.string().nonempty().url()).optional(),
 });
 const hashQuerySchema = z.object({
   hash: z.string().nonempty(),

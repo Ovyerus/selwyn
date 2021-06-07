@@ -17,7 +17,7 @@ const Toasts = () => {
   const container = document.getElementById("overlays-root")!;
 
   return ReactDOM.createPortal(
-    <div className="fixed w-screen h-screen top-0 left-0 p-3 flex items-end justify-end pointer-events-none">
+    <div className="floating-container z-50">
       <div
         role="log"
         className="items-end flex flex-col gap-4 pointer-events-auto sm:max-w-sm w-full overflow-visible"

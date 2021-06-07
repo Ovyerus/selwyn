@@ -3,14 +3,64 @@
 @tailwind utilities;
 
 @layer utilities {
+  .focusable {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-black;
+    @apply dark:focus-visible:ring-indigo-500 dark:focus-visible:ring-offset-gray-900;
+  }
+
   .link {
     @apply text-indigo-500 hover:underline dark:text-indigo-300;
   }
 }
 
 @layer components {
+  .button {
+    @apply px-4 py-2;
+    @apply bg-gray-200 text-black hover:bg-gray-300 focus-visible:bg-gray-300;
+    @apply dark:bg-opacity-[15%] dark:hover:bg-opacity-30 dark:focus-visible:bg-opacity-30 dark:text-gray-50;
+    @apply text-sm font-medium;
+    @apply rounded-lg focusable;
+
+    &.success {
+      @apply bg-green-100 hover:bg-green-200 focus-visible:bg-green-200 text-green-900;
+      @apply dark:bg-green-900 dark:hover:bg-green-700 dark:focus-visible:bg-green-700 dark:text-green-50;
+    }
+
+    &.danger {
+      @apply bg-red-100 hover:bg-red-200 focus-visible:bg-red-200 text-red-900;
+      @apply dark:bg-red-900 dark:hover:bg-red-700 dark:focus-visible:bg-red-700 dark:text-red-50;
+    }
+
+    &:disabled {
+      /* TODO: disable hover style somehow */
+      @apply opacity-50 cursor-not-allowed;
+    }
+  }
+
+  .input {
+    @apply block;
+    @apply w-full;
+    @apply dark:bg-transparent dark:placeholder-gray-400;
+    @apply border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 dark:border-gray-600;
+    @apply sm:text-sm;
+    @apply rounded-lg;
+
+    &:invalid {
+      @apply border-red-300 dark:border-red-400 focus:border-gray-300 dark:focus:border-gray-600;
+    }
+  }
+
   .rounded-button {
     @apply bg-gray-600 bg-opacity-0 p-2 rounded-full focus:outline-none hover:bg-opacity-10 active:bg-opacity-30 transition-colors duration-75;
+  }
+
+  .spinner {
+    @apply w-6 h-6 border-4 border-indigo-300 rounded-full animate-spin;
+    border-top-color: theme("colors.indigo.500");
+  }
+
+  .floating-container {
+    @apply fixed w-screen h-screen inset-0 p-3 flex items-end justify-end pointer-events-none;
   }
 
   /* TODO: maybe consider this giant blob. Can't make the colour easily change based on theme :( */

@@ -6,7 +6,7 @@
 
 .ghButton {
   @apply py-2 px-3;
-  @apply bg-[#181717] text-white /*  dark:bg-white dark:text-[#181717] */;
+  @apply bg-[#181717] text-white;
   @apply flex items-center justify-center;
   @apply text-center rounded-md;
   @apply hover:shadow-lg transition;
