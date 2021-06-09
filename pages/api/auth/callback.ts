@@ -33,6 +33,13 @@ export default methods({
       }
     );
 
+    if (!email)
+      return res.status(400).json({
+        status: 400,
+        message:
+          "Unable to get `email` from GitHub. You need to set a public email for login to work. This may change in the future.",
+      });
+
     const user = await db.user.upsert({
       where: { email },
       create: { email },
