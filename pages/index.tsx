@@ -1,5 +1,7 @@
 import React from "react";
 
-const IndexPage = () => <div>👀 hi</div>;
+const message = process.env.NEXT_PUBLIC_SELWYN_MESSAGE || "👀 hi";
+
+const IndexPage = () => <div>{message}</div>;
 
 export default IndexPage;
