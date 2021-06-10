@@ -6,7 +6,8 @@ import { hashString } from ".";
 import db from "./db";
 
 export const logVisitor = async (req: IncomingMessage, redirect: number) => {
-  // TODO: anonymise this if request sets `DNT: 1`?
+  // Respect legacy "Do Not Track" header or more modern "Global Privacy Control" (https://globalprivacycontrol.org/)
+  const anonymise = req.headers["sec-gpc"] ?? req.headers.dnt;
   const ip =
     (req.headers["x-forwarded-for"] as string | undefined)
       ?.split(",")
@@ -21,7 +22,7 @@ export const logVisitor = async (req: IncomingMessage, redirect: number) => {
 
   await db.visitor.create({
     data: {
-      hash: hashString(ip),
+      hash: hashString(anonymise === "1" ? Date.now().toString() : ip),
       country: geoLookup?.country,
       referrer,
       redirect: { connect: { id: redirect } },
