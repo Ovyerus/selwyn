@@ -4,7 +4,9 @@
   @apply grid overflow-y-auto;
   @apply shadow-md rounded-xl border-collapse;
 
-  grid-template-columns: max-content minmax(110px, auto) minmax(auto, 200px) 90px;
+  grid-template-columns:
+    max-content minmax(110px, auto) minmax(auto, 200px) minmax(auto, 200px)
+    90px;
 }
 
 th.cell {

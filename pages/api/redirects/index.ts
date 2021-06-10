@@ -1,3 +1,4 @@
+import { Redirect } from "@prisma/client";
 import { methods, validate } from "avoca";
 import { z } from "zod";
 
@@ -14,11 +15,27 @@ const postSchema = z.object({
   hash: noExtraWhitespace(z.string().nonempty()).optional(), // Will have hash generated if not provided.
 });
 
+export type RedirectWithAnalytics = Omit<
+  Redirect,
+  "createdAt" | "updatedAt"
+> & {
+  createdAt: string;
+  updatedAt: string;
+  uniqueVisitors: number;
+  totalVisitors: number;
+};
+
 export const getRedirectsForUser = (creatorId: string) =>
-  db.redirect.findMany({
-    where: { creatorId },
-    take: 100,
-  });
+  db.$queryRaw<RedirectWithAnalytics[]>`
+  SELECT
+    r.*,
+    COUNT(DISTINCT v.hash) AS "uniqueVisitors",
+    COUNT(v) AS "totalVisitors"
+  FROM "Redirect" AS r
+  LEFT JOIN "Visitor" AS v ON v."redirectId" = r.id
+  WHERE r."creatorId" = ${creatorId}
+  GROUP BY r.id;
+  `;
 
 export default methods({
   get: {
@@ -60,7 +77,7 @@ export default methods({
 
       res.json({
         status: 200,
-        data: redirect,
+        data: { ...redirect, uniqueVisitors: 0, totalVisitors: 0 },
       });
     }),
   },

@@ -3,14 +3,13 @@ import plus from "@iconify/icons-gg/math-plus";
 import pen from "@iconify/icons-gg/pen";
 import trash from "@iconify/icons-gg/trash";
 import { Icon } from "@iconify/react";
-import { Redirect } from "@prisma/client";
 import cc from "classcat";
 import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps } from "next";
 import React, { FormEvent, useRef, useState } from "react";
 import { useList } from "react-use";
 
-import { getRedirectsForUser } from "./api/redirects";
+import { getRedirectsForUser, RedirectWithAnalytics } from "./api/redirects";
 
 import styles from "~/assets/style/dash.module.css";
 import Toasts from "~/components/Toasts";
@@ -60,13 +59,16 @@ const DashPage = ({ redirects: initial }: Props) => {
     setLoading(true);
 
     try {
-      const { data } = await request<{ data: Redirect }>("/api/redirects", {
-        method: "POST",
-        json: {
-          url: newUrl,
-          hash: newHash || undefined,
-        },
-      });
+      const { data } = await request<{ data: RedirectWithAnalytics }>(
+        "/api/redirects",
+        {
+          method: "POST",
+          json: {
+            url: newUrl,
+            hash: newHash || undefined,
+          },
+        }
+      );
 
       // TODO: deserialise createdAt and updatedAt into Dates, if we need them later.
       push(data);
@@ -156,6 +158,7 @@ const DashPage = ({ redirects: initial }: Props) => {
               <th className={styles.cell}>Path</th>
               <th className={styles.cell}>URL</th>
               <th className={styles.cell}>Unique Visitors</th>
+              <th className={styles.cell}>Total Visitors</th>
               <th className={styles.cell} />
             </tr>
           </thead>
@@ -181,8 +184,10 @@ const DashPage = ({ redirects: initial }: Props) => {
                   </a>
                 </td>
                 <td className={styles.cell}>
-                  {/* <span>{row.visitors}</span> */}
-                  <span>0</span>
+                  <span>{row.uniqueVisitors}</span>
+                </td>
+                <td className={styles.cell}>
+                  <span>{row.totalVisitors}</span>
                 </td>
                 <td className={cc([styles.cell, "justify-end"])}>
                   <button className="mr-3">
@@ -303,7 +308,7 @@ const DashPage = ({ redirects: initial }: Props) => {
 };
 
 interface Props {
-  redirects: Redirect[];
+  redirects: RedirectWithAnalytics[];
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({

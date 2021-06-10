@@ -24,7 +24,15 @@ model Redirect {
   updatedAt DateTime @updatedAt
   creatorId String
   creator User @relation(fields: [creatorId], references: [id])
+  visitors Visitor[]
 }
 
-// TODO: hits/visitors
-// TODO: marking for duplicate redirects?
+model Visitor {
+  id String @id @default(uuid())
+  hash String
+  referrer String?
+  country String?
+  createdAt DateTime @default(now())
+  redirectId Int
+  redirect Redirect @relation(fields: [redirectId], references: [id])
+}

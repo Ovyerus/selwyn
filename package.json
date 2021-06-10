@@ -14,7 +14,7 @@
     "lint": "eslint --ext js,jsx,ts,tsx --fix .",
     "migrate": "prisma migrate deploy",
     "migrate:dev": "prisma migrate dev",
-    "migrate:gen": "prisma migrate dev --create-only",
+    "migrate:create": "prisma migrate dev --create-only",
     "start": "next start"
   },
   "dependencies": {
@@ -27,6 +27,7 @@
     "classcat": "^5.0.3",
     "cookie": "^0.4.1",
     "framer-motion": "^4.1.17",
+    "geoip-country": "^4.0.72",
     "jose": "^3.12.3",
     "murmurhash": "^2.0.0",
     "next": "^10.2.3",
@@ -42,6 +43,7 @@
   "devDependencies": {
     "@tailwindcss/forms": "^0.3.3",
     "@types/cookie": "^0.4.0",
+    "@types/geoip-country": "^4.0.0",
     "@types/murmurhash": "^2.0.0",
     "@types/node": "^15.12.0",
     "@types/react": "^17.0.9",
