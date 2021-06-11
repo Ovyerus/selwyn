@@ -6,24 +6,29 @@ import { RedirectWithAnalytics } from "~/pages/api/redirects";
 import { request } from "~/util";
 import { useStore } from "~/util/store";
 
-const AddRedirectDialog = ({
-  pushNewRedirect,
+const EditRedirectDialog = ({
+  updateRedirect,
+  editedId,
+  editedHash,
+  editedUrl,
   open,
+  setEditedId,
+  setEditedHash,
+  setEditedUrl,
   setOpen: _setOpen,
 }: AddRedirectDialogProps) => {
   const pushToast = useStore(({ pushToast }) => pushToast);
   const focusRef = useRef(null);
 
   const [loading, setLoading] = useState(false);
-  const [newHash, setNewHash] = useState("");
-  const [newUrl, setNewUrl] = useState("");
 
   const setOpen = (val: boolean) => {
     _setOpen(val);
 
     if (!val) {
-      setNewHash("");
-      setNewUrl("");
+      setEditedId("");
+      setEditedHash("");
+      setEditedUrl("");
     }
   };
 
@@ -32,25 +37,26 @@ const AddRedirectDialog = ({
     setLoading(true);
 
     try {
+      // TODO: update endpoint to also get new visitors
       const { data } = await request<{ data: RedirectWithAnalytics }>(
-        "/api/redirects",
+        `/api/redirects/${editedId}`,
         {
-          method: "POST",
+          method: "PATCH",
           json: {
-            url: newUrl,
-            hash: newHash || undefined,
+            url: editedUrl || undefined,
+            hash: editedHash || undefined,
           },
         }
       );
       const toCopy = new URL(location.href);
       toCopy.pathname = `/${data.hash}`;
 
-      pushNewRedirect(data);
+      updateRedirect(data);
       await navigator.clipboard.writeText(toCopy.toString());
 
       pushToast({
         duration: 3000,
-        children: "Done. New redirect copied to clipboard.",
+        children: "Done. Updated redirect copied to clipboard.",
         className: "!bg-green-100 dark:!bg-green-900",
       });
 
@@ -75,8 +81,8 @@ const AddRedirectDialog = ({
 
   return (
     <Dialog
-      title="New Redirect"
-      description="Create a new redirect."
+      title="Update Redirect"
+      description="Change information about an existing redirect."
       open={open}
       focusRef={focusRef}
       onClose={setOpen}
@@ -88,17 +94,15 @@ const AddRedirectDialog = ({
             className="input"
             type="url"
             placeholder="https://google.com"
-            value={newUrl}
-            required
-            onChange={(ev) => setNewUrl(ev.target.value)}
+            value={editedUrl}
+            onChange={(ev) => setEditedUrl(ev.target.value)}
           />
-          {/* TODO: additional constraints on needing to be URL-safe/force sluggify (field mask) */}
           <input
             className="input"
             type="text"
             placeholder="Path (optional)"
-            value={newHash}
-            onChange={(ev) => setNewHash(ev.target.value)}
+            value={editedHash}
+            onChange={(ev) => setEditedHash(ev.target.value)}
           />
         </div>
 
@@ -113,13 +117,12 @@ const AddRedirectDialog = ({
           <button
             className="button success"
             type="submit"
-            disabled={!newUrl}
+            disabled={!editedHash && !editedHash}
             onClick={() => void 0}
           >
-            Create
+            Update
           </button>
 
-          {/* TODO: Make buttons a component and put these into them as a prop? */}
           {loading && (
             <div role="status" className="spinner">
               <div className="sr-only">Loading...</div>
@@ -132,9 +135,15 @@ const AddRedirectDialog = ({
 };
 
 export interface AddRedirectDialogProps {
-  pushNewRedirect(data: RedirectWithAnalytics): void;
+  editedId: string;
+  editedHash: string;
+  editedUrl: string;
   open: boolean;
+  setEditedId(val: string): void;
+  setEditedHash(val: string): void;
+  setEditedUrl(val: string): void;
+  updateRedirect(data: RedirectWithAnalytics): void;
   setOpen(value: boolean): void;
 }
 
-export default AddRedirectDialog;
+export default EditRedirectDialog;

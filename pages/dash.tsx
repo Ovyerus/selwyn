@@ -11,6 +11,7 @@ import { getRedirectsForUser, RedirectWithAnalytics } from "./api/redirects";
 
 import styles from "~/assets/style/dash.module.css";
 import AddRedirectDialog from "~/components/AddRedirectDialog";
+import EditRedirectDialog from "~/components/EditRedirectDialog";
 import Toasts from "~/components/Toasts";
 import { request } from "~/util";
 import * as jwt from "~/util/jwt";
@@ -19,8 +20,21 @@ import { useStore } from "~/util/store";
 const DashPage = ({ redirects: initial }: Props) => {
   const pushToast = useStore(({ pushToast }) => pushToast);
 
-  const [redirects, { push, removeAt }] = useList(initial);
+  const [redirects, { push, removeAt, updateAt }] = useList(initial);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialog] = useState(false);
+
+  const [editedId, setEditedId] = useState("");
+  const [editedHash, setEditedHash] = useState("");
+  const [editedUrl, setEditedUrl] = useState("");
+
+  const startEdit = (redirect: RedirectWithAnalytics) => {
+    setEditedId(redirect.hash);
+    setEditedHash(redirect.hash);
+    setEditedUrl(redirect.url);
+
+    setEditDialog(true);
+  };
 
   const copyHash = async (hash: string) => {
     const toCopy = new URL(location.href);
@@ -139,7 +153,7 @@ const DashPage = ({ redirects: initial }: Props) => {
                   <span>{row.totalVisitors}</span>
                 </td>
                 <td className={cc([styles.cell, "justify-end"])}>
-                  <button className="mr-3">
+                  <button className="mr-3" onClick={() => startEdit(row)}>
                     <Icon icon={pen} height={24} />
                   </button>
                   <button
@@ -159,6 +173,23 @@ const DashPage = ({ redirects: initial }: Props) => {
         pushNewRedirect={push}
         open={addDialogOpen}
         setOpen={setAddDialogOpen}
+      />
+
+      <EditRedirectDialog
+        editedId={editedId}
+        editedHash={editedHash}
+        editedUrl={editedUrl}
+        open={editDialogOpen}
+        updateRedirect={(data) =>
+          updateAt(
+            redirects.findIndex((r) => r.id === data.id),
+            data
+          )
+        }
+        setEditedId={setEditedId}
+        setEditedHash={setEditedHash}
+        setEditedUrl={setEditedUrl}
+        setOpen={setEditDialog}
       />
     </div>
   );

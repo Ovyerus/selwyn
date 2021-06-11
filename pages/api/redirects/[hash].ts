@@ -83,10 +83,7 @@ export default methods({
 
         res.json({
           status: 200,
-          data: {
-            hash: newRedirect.hash,
-            url: newRedirect.url,
-          },
+          data: newRedirect,
         });
       }
     ),
