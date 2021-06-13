@@ -48,10 +48,10 @@ const Dialog = ({
             }}
           >
             <header>
-              <HeadlessDialog.Title className="font-bold text-2xl">
+              <HeadlessDialog.Title className="font-bold text-2xl text-gray-900">
                 {title}
               </HeadlessDialog.Title>
-              <HeadlessDialog.Description className="font-medium text-sm">
+              <HeadlessDialog.Description className="font-medium text-sm text-gray-600">
                 {description}
               </HeadlessDialog.Description>
             </header>
@@ -74,7 +74,7 @@ export interface DialogProps {
 }
 
 export const styles = {
-  inputs: "my-4 flex flex-col gap-2",
+  inputs: "my-4 flex flex-col gap-3",
   footer: "flex w-full items-center justify-end gap-2",
 };
 

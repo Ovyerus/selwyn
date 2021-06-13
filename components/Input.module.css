@@ -1,0 +1,41 @@
+.root {
+  @apply flex flex-col;
+
+  &:focus-within {
+    .label,
+    .note {
+      @apply font-bold text-indigo-500;
+    }
+  }
+}
+
+.label {
+  @apply mb-1 pl-1;
+  @apply text-sm font-medium text-gray-600;
+
+  &.required {
+    @apply ml-0.5 text-red-400;
+  }
+}
+
+.note {
+  @apply mt-1.5 pl-1;
+  @apply text-xs text-gray-700;
+}
+
+.input {
+  @apply block;
+  @apply w-full;
+  @apply dark:bg-transparent dark:placeholder-gray-400;
+  @apply border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 dark:border-gray-600;
+  @apply sm:text-sm;
+  @apply rounded-lg;
+
+  &:invalid {
+    @apply border-red-300 dark:border-red-400 focus:border-gray-300 dark:focus:border-gray-600;
+
+    & + .note {
+      @apply font-bold text-red-500;
+    }
+  }
+}

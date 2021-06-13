@@ -1,6 +1,7 @@
 import React, { FormEvent, useRef, useState } from "react";
 
 import Dialog, { styles as DialogStyles } from "./Dialog";
+import Input from "./Input";
 
 import { RedirectWithAnalytics } from "~/pages/api/redirects";
 import { request } from "~/util";
@@ -89,16 +90,18 @@ const EditRedirectDialog = ({
     >
       <form className="contents" onSubmit={submit}>
         <div className={DialogStyles.inputs}>
-          <input
+          <Input
             ref={focusRef}
-            className="input"
+            label="Url"
+            note="The url you want to redirect to."
             type="url"
             placeholder="https://google.com"
             value={editedUrl}
             onChange={(ev) => setEditedUrl(ev.target.value)}
           />
-          <input
-            className="input"
+          <Input
+            label="Path"
+            note="The path to make the redirect under."
             type="text"
             placeholder="Path (optional)"
             value={editedHash}

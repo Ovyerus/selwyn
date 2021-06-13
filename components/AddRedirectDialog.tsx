@@ -1,6 +1,7 @@
 import React, { FormEvent, useRef, useState } from "react";
 
 import Dialog, { styles as DialogStyles } from "./Dialog";
+import Input from "./Input";
 
 import { RedirectWithAnalytics } from "~/pages/api/redirects";
 import { request } from "~/util";
@@ -83,9 +84,10 @@ const AddRedirectDialog = ({
     >
       <form className="contents" onSubmit={submit}>
         <div className={DialogStyles.inputs}>
-          <input
+          <Input
             ref={focusRef}
-            className="input"
+            label="Url"
+            note="The url you want to redirect to."
             type="url"
             placeholder="https://google.com"
             value={newUrl}
@@ -93,10 +95,11 @@ const AddRedirectDialog = ({
             onChange={(ev) => setNewUrl(ev.target.value)}
           />
           {/* TODO: additional constraints on needing to be URL-safe/force sluggify (field mask) */}
-          <input
-            className="input"
+          <Input
+            label="Path"
+            note="The path to make the redirect under. Random if not supplied."
             type="text"
-            placeholder="Path (optional)"
+            placeholder="my-cool-thing"
             value={newHash}
             onChange={(ev) => setNewHash(ev.target.value)}
           />
