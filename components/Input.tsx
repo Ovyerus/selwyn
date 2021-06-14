@@ -52,7 +52,7 @@ export const MaskedInput = React.forwardRef<HTMLInputElement, MaskedInputProps>(
       <IMaskInput
         inputRef={ref}
         className={styles.input}
-        {...props}
+        {...(props as any)}
         onAccept={(val) => onChange?.(val)}
       />
     </InputContainer>
@@ -66,8 +66,9 @@ export type InputProps = BaseInputContainerProps &
   >;
 
 export type MaskedInputProps = BaseInputContainerProps &
-  Omit<IMaskInputProps, "onAccept" | "onChange"> & {
+  Omit<IMaskInputProps, "mask" | "onAccept" | "onChange"> & {
     onChange?(val: string): void;
+    mask: any;
   };
 
 export default Input;
