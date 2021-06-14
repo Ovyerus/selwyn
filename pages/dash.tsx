@@ -2,20 +2,24 @@ import plus from "@iconify/icons-gg/math-plus";
 import pen from "@iconify/icons-gg/pen";
 import trash from "@iconify/icons-gg/trash";
 import { Icon } from "@iconify/react";
-import cc from "classcat";
 import { GetServerSideProps } from "next";
 import React, { useState } from "react";
 import { useList } from "react-use";
 
 import { getRedirectsForUser, RedirectWithAnalytics } from "./api/redirects";
 
-import styles from "~/assets/style/dash.module.css";
 import AddRedirectDialog from "~/components/AddRedirectDialog";
 import EditRedirectDialog from "~/components/EditRedirectDialog";
 import Toasts from "~/components/Toasts";
 import { request } from "~/util";
 import * as jwt from "~/util/jwt";
 import { useStore } from "~/util/store";
+
+const styles = {
+  tableHeadCell:
+    "px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wide",
+  tableBodyCell: "px-6 py-4 whitespace-nowrap",
+} as const;
 
 const DashPage = ({ redirects: initial }: Props) => {
   const pushToast = useStore(({ pushToast }) => pushToast);
@@ -114,59 +118,62 @@ const DashPage = ({ redirects: initial }: Props) => {
           </div>
         </header>
 
-        <table className={styles.table}>
-          <thead className="contents">
-            {/* TODO: clicking on `th` to sort by column */}
-            <tr className={styles.row}>
-              <th className={styles.cell}>Path</th>
-              <th className={styles.cell}>URL</th>
-              <th className={styles.cell}>Unique Visitors</th>
-              <th className={styles.cell}>Total Visitors</th>
-              <th className={styles.cell} />
-            </tr>
-          </thead>
-
-          <tbody className="contents">
-            {redirects.map((row) => (
-              <tr key={row.id} className={styles.row}>
-                <td className={styles.cell}>
-                  <span
-                    className="cursor-pointer"
-                    onClick={() => copyHash(row.hash)}
-                  >
-                    /{row.hash}
-                  </span>
-                </td>
-                <td className={styles.cell}>
-                  <a
-                    className="block w-full break-words text-indigo-500 hover:underline"
-                    href={row.url}
-                  >
-                    {/* TODO: strip protocol? */}
-                    {row.url}
-                  </a>
-                </td>
-                <td className={styles.cell}>
-                  <span>{row.uniqueVisitors}</span>
-                </td>
-                <td className={styles.cell}>
-                  <span>{row.totalVisitors}</span>
-                </td>
-                <td className={cc([styles.cell, "justify-end"])}>
-                  <button className="mr-3" onClick={() => startEdit(row)}>
-                    <Icon icon={pen} height={24} />
-                  </button>
-                  <button
-                    className="text-red-500"
-                    onClick={() => deleteItem(row.hash)}
-                  >
-                    <Icon icon={trash} height={24} />
-                  </button>
-                </td>
+        <div className="shadow overflow-y overflow-x-auto border-gray-200 sm:rounded-lg">
+          <table className="min-w-full max-h-full sm:max-h-[500px] divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr className="divide-x divide-gray-200">
+                <th className={styles.tableHeadCell}>Path</th>
+                <th className={styles.tableHeadCell}>URL</th>
+                <th className={styles.tableHeadCell}>Unique Visitors</th>
+                <th className={styles.tableHeadCell}>Total Visitors</th>
+                <th className={styles.tableHeadCell} />
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody className="bg-white divide-y divide-gray-200">
+              {redirects.map((row) => (
+                <tr key={row.id}>
+                  <td className={styles.tableBodyCell}>
+                    <span
+                      className="cursor-pointer"
+                      onClick={() => copyHash(row.hash)}
+                    >
+                      /{row.hash}
+                    </span>
+                  </td>
+
+                  <td className={styles.tableBodyCell}>
+                    {/* TODO: strip protocol? */}
+                    <a
+                      href={row.url}
+                      className="text-indigo-500 hover:underline"
+                    >
+                      {row.url}
+                    </a>
+                  </td>
+
+                  <td className={styles.tableBodyCell}>{row.uniqueVisitors}</td>
+                  <td className={styles.tableBodyCell}>{row.totalVisitors}</td>
+
+                  <td className={styles.tableBodyCell}>
+                    <div className="w-full flex justify-end">
+                      <button className="mr-3" onClick={() => startEdit(row)}>
+                        <Icon icon={pen} height={24} />
+                      </button>
+
+                      <button
+                        className="text-red-500"
+                        onClick={() => deleteItem(row.hash)}
+                      >
+                        <Icon icon={trash} height={24} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </main>
 
       <AddRedirectDialog
