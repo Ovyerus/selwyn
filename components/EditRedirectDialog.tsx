@@ -1,7 +1,7 @@
 import React, { FormEvent, useRef, useState } from "react";
 
 import Dialog, { styles as DialogStyles } from "./Dialog";
-import Input from "./Input";
+import Input, { MaskedInput } from "./Input";
 
 import { RedirectWithAnalytics } from "~/pages/api/redirects";
 import { request } from "~/util";
@@ -99,13 +99,15 @@ const EditRedirectDialog = ({
             value={editedUrl}
             onChange={(ev) => setEditedUrl(ev.target.value)}
           />
-          <Input
+          <MaskedInput
+            mask={/^[a-z0-9-]+$/i}
             label="Path"
-            note="The path to make the redirect under."
+            note="The path to make the redirect under. Random if not supplied."
             type="text"
-            placeholder="Path (optional)"
+            placeholder="my-cool-thing"
             value={editedHash}
-            onChange={(ev) => setEditedHash(ev.target.value)}
+            prepare={(val: string) => val.replace(/\s/, "-")}
+            onChange={(val) => setEditedHash(val)}
           />
         </div>
 

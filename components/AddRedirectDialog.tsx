@@ -1,7 +1,7 @@
 import React, { FormEvent, useRef, useState } from "react";
 
 import Dialog, { styles as DialogStyles } from "./Dialog";
-import Input from "./Input";
+import Input, { MaskedInput } from "./Input";
 
 import { RedirectWithAnalytics } from "~/pages/api/redirects";
 import { request } from "~/util";
@@ -94,14 +94,15 @@ const AddRedirectDialog = ({
             required
             onChange={(ev) => setNewUrl(ev.target.value)}
           />
-          {/* TODO: additional constraints on needing to be URL-safe/force sluggify (field mask) */}
-          <Input
+          <MaskedInput
+            mask={/^[a-z0-9-]+$/i}
             label="Path"
             note="The path to make the redirect under. Random if not supplied."
             type="text"
             placeholder="my-cool-thing"
             value={newHash}
-            onChange={(ev) => setNewHash(ev.target.value)}
+            prepare={(val: string) => val.replace(/\s/, "-")}
+            onChange={(val) => setNewHash(val)}
           />
         </div>
 

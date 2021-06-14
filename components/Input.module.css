@@ -13,7 +13,7 @@
   @apply mb-1 pl-1;
   @apply text-sm font-medium text-gray-600;
 
-  &.required {
+  & .required {
     @apply ml-0.5 text-red-400;
   }
 }

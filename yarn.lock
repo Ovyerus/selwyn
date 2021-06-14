@@ -1893,6 +1893,11 @@ ignore@^5.1.4:
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.1.8.tgz#f150a8b50a34289b33e22f5889abd4d8016f0e57"
   integrity sha512-BMpfD7PpiETpBl/A6S498BaIJ6Y/ABT93ETbby2fP00v4EbvPBXWEoaR1UBPKs3iR53pJY7EtZk5KACI57i1Uw==
 
+imask@^6.0.7:
+  version "6.0.7"
+  resolved "https://registry.yarnpkg.com/imask/-/imask-6.0.7.tgz#20a626a80e277231d7d5c27cf45d816c035b748e"
+  integrity sha512-zyiKRSzuocb2adasVSz0ku9xxejDRs5wME7Dt5Uk1l83HGBFUP7A8y8Z6TytLCtCiS/A1aArlCTqLcOkoVNbNQ==
+
 import-fresh@^3.0.0, import-fresh@^3.2.1:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/import-fresh/-/import-fresh-3.3.0.tgz#37162c25fcb9ebaa2e6e53d5b4d88ce17d9e0c2b"
@@ -3095,6 +3100,14 @@ react-dom@^17.0.2:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     scheduler "^0.20.2"
+
+react-imask@^6.0.7:
+  version "6.0.7"
+  resolved "https://registry.yarnpkg.com/react-imask/-/react-imask-6.0.7.tgz#75560735607fc79b9065c1d6b25ce676c5e6c94e"
+  integrity sha512-2/E8dAiPH4v1AeadEL1xnWG+CfoG4VQYmAGymltWaNBPEDtnCY6H0TKgvRJJOhE+JkYQfjw5KPesrrvNBz0g/A==
+  dependencies:
+    imask "^6.0.7"
+    prop-types "^15.7.2"
 
 react-is@16.13.1, react-is@^16.7.0, react-is@^16.8.1:
   version "16.13.1"
