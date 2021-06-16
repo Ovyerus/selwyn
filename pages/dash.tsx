@@ -132,7 +132,7 @@ const DashPage = ({ redirects: initial }: Props) => {
 
             <tbody className="bg-white divide-y divide-gray-200">
               {redirects.map((row) => (
-                <tr key={row.id}>
+                <tr key={row.id} className="hover:bg-indigo-50">
                   <td className={styles.tableBodyCell}>
                     <span
                       className="cursor-pointer"
