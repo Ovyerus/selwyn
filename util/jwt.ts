@@ -1,12 +1,11 @@
 import { User } from "@prisma/client";
-import SignJWT from "jose/jwt/sign";
-import jwtVerify from "jose/jwt/verify";
+import { SignJWT, jwtVerify } from "jose";
 
 import db from "./db";
 
 interface Payload {
   sub: string;
-  audience: string;
+  aud: string;
   iat: number;
 }
 
@@ -42,5 +41,5 @@ export const verify = async (token: string) => {
 /** Get the payload from a JWT */
 export const getPayload = (token: string) =>
   jwtVerify(token, secret, verifyOptions).then(
-    ({ payload }) => payload as any as Payload
+    ({ payload }) => payload as Payload
   );

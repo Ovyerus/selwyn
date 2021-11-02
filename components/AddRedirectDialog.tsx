@@ -58,17 +58,19 @@ const AddRedirectDialog = ({
       setOpen(false);
     } catch (err) {
       console.error("failed to create redirect", err);
-      pushToast({
-        duration: 5000,
-        children: (
-          <>
-            Failed to create redirect.
-            <br />
-            {err.message}
-          </>
-        ),
-        className: "!bg-red-100 dark:!bg-red-900",
-      });
+
+      if (err instanceof Error)
+        pushToast({
+          duration: 5000,
+          children: (
+            <>
+              Failed to create redirect.
+              <br />
+              {err.message}
+            </>
+          ),
+          className: "!bg-red-100 dark:!bg-red-900",
+        });
     } finally {
       setLoading(false);
     }
