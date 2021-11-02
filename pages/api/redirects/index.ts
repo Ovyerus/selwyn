@@ -25,8 +25,15 @@ export type RedirectWithAnalytics = Omit<
   totalVisitors: number;
 };
 
-export const getRedirectsForUser = (creatorId: string) =>
-  db.$queryRaw<RedirectWithAnalytics[]>`
+export interface CountRow {
+  count: number;
+}
+
+export const getDashboardInformation = async (creatorId: string) => {
+  // TODO: configurable timeframes
+  // TODO: best referrals, countries, etc.
+  // Comparison with timeframe before
+  const redirectsWithAnalytics = db.$queryRaw<RedirectWithAnalytics[]>`
   SELECT
     r.*,
     COUNT(DISTINCT v.hash) AS "uniqueVisitors",
@@ -37,6 +44,37 @@ export const getRedirectsForUser = (creatorId: string) =>
   GROUP BY r.id;
   `;
 
+  const lastWeekUniqueVisitorsQuery = db.$queryRaw<[CountRow]>`
+  SELECT COUNT(sub.*)
+  FROM (
+    SELECT
+      DISTINCT ON (v.hash) hash
+    FROM "Visitor" as v
+    WHERE v."createdAt" > NOW() - INTERVAL '7 days'
+  ) AS sub;
+  `;
+
+  // TODO: returning visitors instead?
+  const lastWeekTotalVisitorsQuery = db.$queryRaw<[CountRow]>`
+  SELECT
+    COUNT (v.*)
+  FROM "Visitor" as v
+  WHERE v."createdAt" > NOW() - INTERVAL '7 days';
+  `;
+
+  const [
+    redirects,
+    [{ count: lastWeekUniqueVisitors }],
+    [{ count: lastWeekTotalVisitors }],
+  ] = await db.$transaction([
+    redirectsWithAnalytics,
+    lastWeekUniqueVisitorsQuery,
+    lastWeekTotalVisitorsQuery,
+  ]);
+
+  return { redirects, lastWeekUniqueVisitors, lastWeekTotalVisitors };
+};
+
 export default methods({
   get: {
     authenticate: (req) => jwt.verify(req.cookies.token),
@@ -44,9 +82,9 @@ export default methods({
     async fn(req, res) {
       const { sub: userId } = await jwt.getPayload(req.cookies.token);
       // TODO: pagination
-      const redirects = getRedirectsForUser(userId);
+      const data = getDashboardInformation(userId);
 
-      res.json({ status: 200, data: redirects });
+      res.json({ status: 200, data });
     },
   },
 

@@ -2,11 +2,15 @@ import plus from "@iconify/icons-gg/math-plus";
 import pen from "@iconify/icons-gg/pen";
 import trash from "@iconify/icons-gg/trash";
 import { Icon } from "@iconify/react";
+import cc from "classcat";
 import { GetServerSideProps } from "next";
 import React, { useState } from "react";
 import { useList } from "react-use";
 
-import { getRedirectsForUser, RedirectWithAnalytics } from "./api/redirects";
+import {
+  getDashboardInformation,
+  RedirectWithAnalytics,
+} from "./api/redirects";
 
 import AddRedirectDialog from "~/components/AddRedirectDialog";
 import EditRedirectDialog from "~/components/EditRedirectDialog";
@@ -21,7 +25,39 @@ const styles = {
   tableBodyCell: "px-6 py-4 whitespace-nowrap",
 } as const;
 
-const DashPage = ({ redirects: initial }: Props) => {
+const StatCard = ({
+  subtitle,
+  title,
+  value,
+  valueClassName,
+}: StatCardProps) => (
+  <div className="flex items-center px-8 py-4 bg-white border-gray-200 rounded-lg shadow">
+    <div
+      className={cc(["mr-8 text-3xl font-bold text-green-500", valueClassName])}
+    >
+      {value}
+    </div>
+
+    <div className="flex flex-col">
+      <span className="-mb-1 text-lg font-semibold leading-snug">{title}</span>
+      {!!subtitle && <span className="text-sm text-gray-600">{subtitle}</span>}
+    </div>
+  </div>
+);
+
+interface StatCardProps {
+  // className?: string;
+  subtitle?: React.ReactNode;
+  title: React.ReactNode;
+  value: React.ReactNode;
+  valueClassName?: string;
+}
+
+const DashPage = ({
+  redirects: initial,
+  lastWeekTotalVisitors,
+  lastWeekUniqueVisitors,
+}: Props) => {
   const pushToast = useStore(({ pushToast }) => pushToast);
 
   const [redirects, { push, removeAt, updateAt }] = useList(initial);
@@ -97,11 +133,29 @@ const DashPage = ({ redirects: initial }: Props) => {
 
   // TODO: graphs?
   return (
-    <div className="p-2 flex items-center justify-center min-h-screen bg">
-      <Toasts />
+    <div className="flex flex-col items-center min-h-screen p-4 sm:p-8 bg">
+      <main className="flex flex-col w-full max-w-6xl gap-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <StatCard
+            title="Unique visitors"
+            subtitle="in the last week"
+            value={lastWeekUniqueVisitors}
+          />
 
-      <main className="max-w-6xl w-full flex flex-col">
-        <header className="m-4 mt-2 flex items-center sm:mt-0 dark:text-white">
+          <StatCard
+            title="Total visitors"
+            subtitle="in the last week"
+            value={lastWeekTotalVisitors}
+          />
+
+          <StatCard
+            valueClassName="!text-indigo-500"
+            title="Redirects"
+            value={redirects.length}
+          />
+        </div>
+
+        <header className="flex items-center mx-4 dark:text-white">
           <div>
             <span className="font-bold">{redirects.length}</span> redirects
           </div>
@@ -118,7 +172,7 @@ const DashPage = ({ redirects: initial }: Props) => {
           </div>
         </header>
 
-        <div className="shadow overflow-y overflow-x-auto border-gray-200 sm:rounded-lg">
+        <div className="overflow-x-auto border-gray-200 shadow overflow-y sm:rounded-lg">
           <table className="min-w-full max-h-full sm:max-h-[500px] divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr className="divide-x divide-gray-200">
@@ -156,7 +210,7 @@ const DashPage = ({ redirects: initial }: Props) => {
                   <td className={styles.tableBodyCell}>{row.totalVisitors}</td>
 
                   <td className={styles.tableBodyCell}>
-                    <div className="w-full flex justify-end">
+                    <div className="flex justify-end w-full">
                       <button className="mr-3" onClick={() => startEdit(row)}>
                         <Icon icon={pen} height={24} />
                       </button>
@@ -198,13 +252,14 @@ const DashPage = ({ redirects: initial }: Props) => {
         setEditedUrl={setEditedUrl}
         setOpen={setEditDialog}
       />
+
+      <Toasts />
     </div>
   );
 };
 
-interface Props {
-  redirects: RedirectWithAnalytics[];
-}
+type PromiseArg<T> = T extends Promise<infer U> ? U : T;
+type Props = PromiseArg<ReturnType<typeof getDashboardInformation>>;
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({
   req,
@@ -220,9 +275,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
     };
 
   const { sub: userId } = await jwt.getPayload(req.cookies.token);
-  const redirects = await getRedirectsForUser(userId);
+  const data = await getDashboardInformation(userId);
 
-  return { props: { redirects } };
+  return { props: { ...data } };
 };
 
 export default DashPage;

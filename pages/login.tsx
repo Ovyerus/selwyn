@@ -5,7 +5,7 @@ import React from "react";
 import styles from "~/assets/style/login.module.css";
 
 const LoginPage = () => (
-  <div className="p-2 flex items-center justify-center min-h-screen bg">
+  <div className="flex items-center justify-center min-h-screen p-2 bg">
     <main className={styles.card}>
       <a href="/api/auth" className={styles.ghButton}>
         <Icon icon={github} className="mr-3" />
