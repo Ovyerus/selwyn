@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace, import/no-mutable-exports, prefer-destructuring */
-import { PrismaClient } from ".prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 declare global {
   // eslint-disable-next-line no-var
