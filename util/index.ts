@@ -1,4 +1,3 @@
-import { v3 as murmur } from "murmurhash";
 import { has, omit } from "rambda";
 import { z } from "zod";
 
@@ -40,8 +39,6 @@ export const request = <T = any>(
     else throw new StatusError(res);
   });
 };
-
-export const hashString = (input: string) => murmur(input).toString(16);
 
 export const noExtraWhitespace = (validator: z.ZodString) =>
   validator
