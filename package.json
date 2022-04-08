@@ -33,6 +33,7 @@
     "framer-motion": "^5.0.1",
     "geoip-country": "^4.0.92",
     "jose": "^4.1.4",
+    "murmurhash": "^2.0.0",
     "next": "^12.0.2",
     "rambda": "^6.9.0",
     "react": "^17.0.2",

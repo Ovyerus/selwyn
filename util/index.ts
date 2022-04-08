@@ -1,3 +1,4 @@
+import { v3 as murmur } from "murmurhash";
 import { has, omit } from "rambda";
 import { z } from "zod";
 
@@ -46,3 +47,5 @@ export const noExtraWhitespace = (validator: z.ZodString) =>
       message: "String cannot be only whitespace",
     })
     .transform((val) => val.trim());
+
+export const hashString = (input: string) => murmur(input).toString(16);
